@@ -1,3 +1,5 @@
+package discordcasino;
+
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.application.Application;

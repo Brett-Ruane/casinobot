@@ -1,3 +1,5 @@
+package discordcasino;
+
 public class Player {
 
     private static String name = "";

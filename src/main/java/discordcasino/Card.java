@@ -1,3 +1,5 @@
+package discordcasino;
+
 public class Card {
 
     private String suit;
