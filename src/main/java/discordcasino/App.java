@@ -15,7 +15,7 @@ public class App extends ListenerAdapter {
 
     private static String[] a;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         a = args;
         JDA casino = JDABuilder
                 .createLight("MTA3MzUyNTAyMjEwNDIyNzg2MA.GTnhor.1JHNIcr_7AZUKXo4_6AhQppZPEuVK2YMMAU7IM",
@@ -27,10 +27,9 @@ public class App extends ListenerAdapter {
     }
 
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        // make sure we handle the right command
         switch (event.getName()) {
             case "blackjack":
-                event.reply("working on it!!!");
+                event.reply("working on it!!!").setEphemeral(true).queue();
                 Application.launch(BlackJackUI.class, a);
                 break;
         }
