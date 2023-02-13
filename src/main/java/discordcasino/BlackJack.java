@@ -35,7 +35,7 @@ public class BlackJack {
     }
 
     public void startGame() {
-        System.out.println(deck);
+        // System.out.println(deck);
         Card dealt = deck.deal();
         oneCards.add(dealt);
         if (dealt.pointValue() == 11)
@@ -113,7 +113,7 @@ public class BlackJack {
     }
 
     public String hit() {
-        System.out.println(deck);
+        // System.out.println(deck);
         Card dealt = deck.deal();
         one.add(dealt.pointValue());
         oneCards.add(dealt);
