@@ -1,6 +1,7 @@
 package discordcasino;
 
 import javafx.stage.Stage;
+import net.dv8tion.jda.api.utils.FileUpload;
 import javafx.scene.Scene;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -49,7 +50,7 @@ public class BlackJackUI extends Application {
 
     // dealer cards
     private HBox dealerCardRow;
-    private ImageView dealerCardHolder[] = new ImageView[5];
+    private FileUpload dealerCardHolder[] = new FileUpload[5];
 
     // your cards
     private HBox yourCardsRow;
@@ -58,7 +59,7 @@ public class BlackJackUI extends Application {
 
     // where cards go
     private HBox cardRow;
-    private ImageView cardHolder[] = new ImageView[5];
+    private FileUpload cardHolder[] = new FileUpload[5];
 
     // total and buttons
     private HBox bottomRow;
@@ -114,14 +115,21 @@ public class BlackJackUI extends Application {
         // dealer cards
         dealerCardRow = new HBox(4);
         for (int i = 0; i < dealerCardHolder.length; i++) {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("GameCards/white.GIF");
-            dealerCardHolder[i] = new ImageView(new Image(is));
+            // InputStream is =
+            // getClass().getClassLoader().getResourceAsStream("GameCards/white.GIF");
+            File file = new File("GameCards/back1.GIF");
+            FileUpload upload = FileUpload.fromData(file);
+            dealerCardHolder[i] = upload;
         }
         dealerCardRow.setPadding(new Insets(20));
-        dealerCardHolder[0] = new ImageView(dealerCards.get(0).url());
-        dealerCardHolder[1] = new ImageView("GameCards/back1.GIF");
-        for (int i = 0; i < dealerCardHolder.length; i++)
-            dealerCardRow.getChildren().add(dealerCardHolder[i]);
+        File file = new File(dealerCards.get(0).url());
+        FileUpload upload = FileUpload.fromData(file);
+        dealerCardHolder[0] = upload;
+        file = new File("GameCards/back1.GIF");
+        upload = FileUpload.fromData(file);
+        dealerCardHolder[1] = upload;
+        // for (int i = 0; i < dealerCardHolder.length; i++)
+        // dealerCardRow.getChildren().add(dealerCardHolder[i]);
 
         // your cards
         yourCardsRow = new HBox(4);
@@ -133,16 +141,23 @@ public class BlackJackUI extends Application {
         yourCardsRow.getChildren().addAll(yourCards, winLoose);
 
         // test
-        for (int i = 0; i < cardHolder.length; i++)
-            cardHolder[i] = new ImageView("GameCards/white.GIF");
-        cardHolder[0] = new ImageView(oneCards.get(0).url());
-        cardHolder[1] = new ImageView(oneCards.get(1).url());
+        for (int i = 0; i < cardHolder.length; i++) {
+            file = new File("GameCards/white.GIF");
+            upload = FileUpload.fromData(file);
+            cardHolder[i] = upload;
+        }
+        file = new File(oneCards.get(0).url());
+        upload = FileUpload.fromData(file);
+        cardHolder[0] = upload;
+        file = new File(oneCards.get(1).url());
+        upload = FileUpload.fromData(file);
+        cardHolder[1] = upload;
 
         // cardRow
         cardRow = new HBox(4);
         cardRow.setPadding(new Insets(20));
-        for (int i = 0; i < cardHolder.length; i++)
-            cardRow.getChildren().add(cardHolder[i]);
+        // for (int i = 0; i < cardHolder.length; i++)
+        // cardRow.getChildren().add(cardHolder[i]);
 
         // bottomRow
         bottomRow = new HBox(4);
@@ -192,7 +207,9 @@ public class BlackJackUI extends Application {
     }
 
     private void stand(ActionEvent a) {
-        dealerCardHolder[1].setImage(new Image(dealerCards.get(1).url()));
+        File file = new File(dealerCards.get(1).url());
+        FileUpload upload = FileUpload.fromData(file);
+        dealerCardHolder[1] = upload;
         System.out.println(deck);
         hit.setDisable(true);
         stand.setDisable(true);
@@ -204,7 +221,9 @@ public class BlackJackUI extends Application {
             Card dealt = deck.deal();
             dealer.add(dealt.pointValue());
             dealerCards.add(dealt);
-            dealerCardHolder[count2].setImage(new Image(dealt.url()));
+            file = new File(dealt.url());
+            upload = FileUpload.fromData(file);
+            dealerCardHolder[count2] = upload;
             count2++;
             if (dealt.pointValue() == 11)
                 dealer.addAce();
@@ -233,7 +252,9 @@ public class BlackJackUI extends Application {
         one.add(dealt.pointValue());
         total.setText("Total = " + one.total());
         oneCards.add(dealt);
-        cardHolder[count].setImage(new Image(dealt.url()));
+        File file = new File(dealt.url());
+        FileUpload upload = FileUpload.fromData(file);
+        cardHolder[count] = upload;
         count++;
         if (dealt.pointValue() == 11)
             one.addAce();

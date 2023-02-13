@@ -1,5 +1,6 @@
 package discordcasino;
 
+import java.io.File;
 import java.util.Collections;
 
 import javafx.application.Application;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.interaction.command.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 public class App extends ListenerAdapter {
 
@@ -29,6 +31,9 @@ public class App extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
             case "blackjack":
+                File file = new File("GameCards/back1.GIF");
+                FileUpload upload = FileUpload.fromData(file);
+                event.getChannel().sendMessage("Here is my image !").addFiles(upload).queue();
                 event.reply("working on it!!!").setEphemeral(true).queue();
                 Application.launch(BlackJackUI.class, a);
                 break;
