@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -14,6 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public class App extends ListenerAdapter {
 
@@ -32,6 +36,7 @@ public class App extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
             case "blackjack":
+                game = new BlackJack();
                 event.reply("Black Jack").setEphemeral(true).queue();
                 List<FileUpload> arrayD = game.getDealerCardsUploads();
                 event.getChannel().sendMessage("Dealers Cards")
@@ -43,7 +48,7 @@ public class App extends ListenerAdapter {
                 list.add(hit);
                 list.add(stand);
                 List<FileUpload> array = game.getCardsUploads();
-                event.getChannel().sendMessage("Your Cards; total = " + game.getOne().total())
+                event.getChannel().sendMessage("Your Cards " + game.getOne().total())
                         .addFiles(array.get(0), array.get(1))
                         .setActionRow(list)
                         .queue();
@@ -56,7 +61,14 @@ public class App extends ListenerAdapter {
             System.out.println("HIT PRESSED");
             game.hit();
             List<FileUpload> array = game.getCardsUploads();
-            event.editMessageAttachments(array);
+            // event.editMessageAttachments(array).queue();
+            // event.editMessage("Your Cards; total = edit" +
+            // game.getOne().total()).queue();
+            MessageEditData m = new MessageEditBuilder().setContent("Your Cards; total = edit" + game.getOne().total())
+                    .setFiles(array)
+                    .build();
+            event.editMessage(m).queue();
+            System.out.println(game.getOne().total());
         }
     }
 }
