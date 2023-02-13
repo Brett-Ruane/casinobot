@@ -1,5 +1,6 @@
 package discordcasino;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import net.dv8tion.jda.api.events.interaction.command.*;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -19,7 +22,11 @@ public class App extends ListenerAdapter {
 
     private BlackJack game = new BlackJack();
 
-    private String gameState = "";
+    private ButtonInteractionEvent hitA;
+    private ButtonInteractionEvent standA;
+
+    private Button hit;
+    private Button stand;
 
     public static void main(String[] args) throws Exception {
         JDA casino = JDABuilder
@@ -37,30 +44,26 @@ public class App extends ListenerAdapter {
                 game = new BlackJack();
                 event.reply("Black Jack").setEphemeral(true).queue();
                 List<FileUpload> arrayD = game.getDealerCardsUploads();
-                Button stand = Button.danger("Stand", "Stand");
+                stand = Button.danger("Stand", "Stand");
                 event.getChannel()
                         .sendMessage(
                                 "Dealer's Cards; total = " + game.getDealerCards().get(0).pointValue() + " + ?")
                         .addFiles(arrayD.get(0), arrayD.get(1))
                         .setActionRow(stand)
                         .queue();
-                Button hit = Button.primary("Hit", "Hit");
+                hit = Button.primary("Hit", "Hit");
                 List<FileUpload> array = game.getCardsUploads();
                 event.getChannel().sendMessage("Your Cards; total = " + game.getOne().total())
                         .addFiles(array.get(0), array.get(1))
                         .setActionRow(hit)
                         .queue();
-                if (gameState != "") {
-                    hit.asDisabled();
-                    stand.asDisabled();
-                    event.getChannel().sendMessage("You " + gameState).queue();
-                }
                 break;
         }
     }
 
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getButton().getId().equals("Hit")) {
+            hitA = event;
             System.out.println("HIT PRESSED");
             String str = game.hit();
             List<FileUpload> array = game.getCardsUploads();
@@ -73,7 +76,12 @@ public class App extends ListenerAdapter {
                     .build();
             event.editMessage(m).queue();
             System.out.println(game.getOne().total());
-            gameState = str;
+            if (str != "") {
+                hit.asDisabled();
+                stand.asDisabled();
+                event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
+                        .queue();
+            }
         }
         if (event.getButton().getId().equals("Stand")) {
             System.out.println("STAND PRESSED");
@@ -83,13 +91,17 @@ public class App extends ListenerAdapter {
             // event.editMessage("Your Cards; total = edit" +
             // game.getOne().total()).queue();
             // fixed
+            final List<LayoutComponent> list = new ArrayList<>();
+            list.add(ActionRow.of(stand.asDisabled()));
             MessageEditData m = new MessageEditBuilder()
                     .setContent("Dealer's Cards; total = " + game.getDealer().total())
                     .setFiles(array)
+                    .setComponents(list)
                     .build();
             event.editMessage(m).queue();
-            System.out.println(game.getOne().total());
-            gameState = str;
+            System.out.println(game.getDealer().total());
+            event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
+                    .queue();
         }
     }
 }
