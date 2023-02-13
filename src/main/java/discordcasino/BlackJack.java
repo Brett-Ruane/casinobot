@@ -18,9 +18,6 @@ public class BlackJack {
 
     private static final int[] POINT_VALUES = { 11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10 };
 
-    private int count = 2;
-    private int count2 = 2;
-
     // private Label dealerTotal;
     private List<FileUpload> dealerCardHolder = new ArrayList<FileUpload>();
     // private Label total;
@@ -97,7 +94,6 @@ public class BlackJack {
             file = new File(dealt.url());
             upload = FileUpload.fromData(file);
             dealerCardHolder.add(upload);
-            count2++;
             if (dealt.pointValue() == 11)
                 dealer.addAce();
         }
@@ -116,7 +112,7 @@ public class BlackJack {
         }
     }
 
-    private void hit(ActionEvent a) {
+    public void hit() {
         System.out.println(deck);
         Card dealt = deck.deal();
         one.add(dealt.pointValue());
@@ -124,7 +120,6 @@ public class BlackJack {
         File file = new File(dealt.url());
         FileUpload upload = FileUpload.fromData(file);
         cardHolder.add(upload);
-        count++;
         if (dealt.pointValue() == 11)
             one.addAce();
         if (one.total() > 21 && one.getAce() > 0) {
