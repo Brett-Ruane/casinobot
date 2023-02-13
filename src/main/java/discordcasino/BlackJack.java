@@ -3,8 +3,6 @@ package discordcasino;
 import java.io.File;
 import java.util.List;
 
-import javafx.event.ActionEvent;
-
 import java.util.ArrayList;
 
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -74,15 +72,14 @@ public class BlackJack {
         cardHolder.add(upload);
 
         if (one.total() == 21) {
-            ActionEvent a = new ActionEvent();
-            stand(a);
+            stand();
         }
     }
 
-    private void stand(ActionEvent a) {
+    public String stand() {
         File file = new File(dealerCards.get(1).url());
         FileUpload upload = FileUpload.fromData(file);
-        dealerCardHolder.add(upload);
+        dealerCardHolder.set(1, upload);
         while ((dealer.total() < 17) || (dealer.total() > 17 && dealer.getAce() != 0)) {
             if (dealer.total() > 17 && dealer.getAce() > 0) {
                 dealer.subTotal(10);
@@ -101,18 +98,21 @@ public class BlackJack {
             // you win
             System.out.println("YOU WIN");
             System.out.println("Dealer Total = " + dealer.total());
+            return "win";
         } else if (one.total() == dealer.total()) {
             // tie
             System.out.println("TIE");
             System.out.println("Dealer Total = " + dealer.total());
+            return "tie";
         } else {
             // you loose
             System.out.println("YOU LOOSE");
             System.out.println("Dealer Total = " + dealer.total());
+            return "lose";
         }
     }
 
-    public void hit() {
+    public String hit() {
         System.out.println(deck);
         Card dealt = deck.deal();
         one.add(dealt.pointValue());
@@ -130,8 +130,10 @@ public class BlackJack {
             System.out.println("Total = " + one.total());
             System.out.println("BUST");
             System.out.println("YOU LOOSE");
+            return "lose";
             // System.exit(1);
         }
+        return "";
     }
 
     public Player getOne() {
@@ -148,5 +150,9 @@ public class BlackJack {
 
     public List<FileUpload> getDealerCardsUploads() {
         return dealerCardHolder;
+    }
+
+    public List<Card> getDealerCards() {
+        return dealerCards;
     }
 }
