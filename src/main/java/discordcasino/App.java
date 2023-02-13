@@ -20,88 +20,100 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 public class App extends ListenerAdapter {
 
-    private BlackJack game = new BlackJack();
+        private BlackJack game = new BlackJack();
 
-    private ButtonInteractionEvent hitA;
-    private ButtonInteractionEvent standA;
+        ButtonInteractionEvent bustAct;
+        private boolean bust = false;
 
-    private Button hit;
-    private Button stand;
+        private Button hit;
+        private Button stand;
 
-    public static void main(String[] args) throws Exception {
-        JDA casino = JDABuilder
-                .createLight("MTA3MzUyNTAyMjEwNDIyNzg2MA.GTnhor.1JHNIcr_7AZUKXo4_6AhQppZPEuVK2YMMAU7IM",
-                        Collections.emptyList())
-                .addEventListeners(new App())
-                .setActivity(Activity.playing("Type /blackjack"))
-                .build();
-        casino.updateCommands().addCommands(Commands.slash("blackjack", "Plays BlackJack")).queue();
-    }
-
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        switch (event.getName()) {
-            case "blackjack":
-                game = new BlackJack();
-                event.reply("Black Jack").setEphemeral(true).queue();
-                List<FileUpload> arrayD = game.getDealerCardsUploads();
-                stand = Button.danger("Stand", "Stand");
-                event.getChannel()
-                        .sendMessage(
-                                "Dealer's Cards; total = " + game.getDealerCards().get(0).pointValue() + " + ?")
-                        .addFiles(arrayD.get(0), arrayD.get(1))
-                        .setActionRow(stand)
-                        .queue();
-                hit = Button.primary("Hit", "Hit");
-                List<FileUpload> array = game.getCardsUploads();
-                event.getChannel().sendMessage("Your Cards; total = " + game.getOne().total())
-                        .addFiles(array.get(0), array.get(1))
-                        .setActionRow(hit)
-                        .queue();
-                break;
+        public static void main(String[] args) throws Exception {
+                JDA casino = JDABuilder
+                                .createLight("MTA3MzUyNTAyMjEwNDIyNzg2MA.GTnhor.1JHNIcr_7AZUKXo4_6AhQppZPEuVK2YMMAU7IM",
+                                                Collections.emptyList())
+                                .addEventListeners(new App())
+                                .setActivity(Activity.playing("Type /blackjack"))
+                                .build();
+                casino.updateCommands().addCommands(Commands.slash("blackjack", "Plays BlackJack")).queue();
         }
-    }
 
-    public void onButtonInteraction(ButtonInteractionEvent event) {
-        if (event.getButton().getId().equals("Hit")) {
-            hitA = event;
-            System.out.println("HIT PRESSED");
-            String str = game.hit();
-            List<FileUpload> array = game.getCardsUploads();
-            // event.editMessageAttachments(array).queue();
-            // event.editMessage("Your Cards; total = edit" +
-            // game.getOne().total()).queue();
-            // fixed
-            MessageEditData m = new MessageEditBuilder().setContent("Your Cards; total = " + game.getOne().total())
-                    .setFiles(array)
-                    .build();
-            event.editMessage(m).queue();
-            System.out.println(game.getOne().total());
-            if (str != "") {
-                hit.asDisabled();
-                stand.asDisabled();
-                event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
-                        .queue();
-            }
+        public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+                switch (event.getName()) {
+                        case "blackjack":
+                                game = new BlackJack();
+                                event.reply("Black Jack").setEphemeral(true).queue();
+                                List<FileUpload> arrayD = game.getDealerCardsUploads();
+                                stand = Button.danger("Stand", "Stand");
+                                event.getChannel()
+                                                .sendMessage(
+                                                                "Dealer's Cards; total = " + game.getDealerCards()
+                                                                                .get(0).pointValue() + " + ?")
+                                                .addFiles(arrayD.get(0), arrayD.get(1))
+                                                .setActionRow(stand)
+                                                .queue();
+                                hit = Button.primary("Hit", "Hit");
+                                List<FileUpload> array = game.getCardsUploads();
+                                event.getChannel().sendMessage("Your Cards; total = " + game.getOne().total())
+                                                .addFiles(array.get(0), array.get(1))
+                                                .setActionRow(hit)
+                                                .queue();
+                                break;
+                }
         }
-        if (event.getButton().getId().equals("Stand")) {
-            System.out.println("STAND PRESSED");
-            String str = game.stand();
-            List<FileUpload> array = game.getDealerCardsUploads();
-            // event.editMessageAttachments(array).queue();
-            // event.editMessage("Your Cards; total = edit" +
-            // game.getOne().total()).queue();
-            // fixed
-            final List<LayoutComponent> list = new ArrayList<>();
-            list.add(ActionRow.of(stand.asDisabled()));
-            MessageEditData m = new MessageEditBuilder()
-                    .setContent("Dealer's Cards; total = " + game.getDealer().total())
-                    .setFiles(array)
-                    .setComponents(list)
-                    .build();
-            event.editMessage(m).queue();
-            System.out.println(game.getDealer().total());
-            event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
-                    .queue();
+
+        public void onButtonInteraction(ButtonInteractionEvent event) {
+                if (event.getButton().getId().equals("Hit")) {
+                        System.out.println("r# = " + event.getResponseNumber());
+                        System.out.println("HIT PRESSED");
+                        String str = game.hit();
+                        List<FileUpload> array = game.getCardsUploads();
+                        // event.editMessageAttachments(array).queue();
+                        // event.editMessage("Your Cards; total = edit" +
+                        // game.getOne().total()).queue();
+                        // fixed
+                        if (str != "") {
+                                bust = true;
+                                final List<LayoutComponent> list = new ArrayList<>();
+                                list.add(ActionRow.of(hit.asDisabled(), stand.asDisabled()));
+                                MessageEditData m = new MessageEditBuilder()
+                                                .setContent("Your Cards; total = " + game.getOne().total())
+                                                .setFiles(array)
+                                                .setComponents(list)
+                                                .build();
+                                event.editMessage(m).queue();
+                        } else {
+                                MessageEditData m = new MessageEditBuilder()
+                                                .setContent("Your Cards; total = " + game.getOne().total())
+                                                .setFiles(array)
+                                                .build();
+                                event.editMessage(m).queue();
+                        }
+                        System.out.println(game.getOne().total());
+                }
+                if (event.getButton().getId().equals("Stand")) {
+                        System.out.println("EVENT = " + event.getButton().getId());
+                        if (bust == true) {
+
+                        }
+                        System.out.println("STAND PRESSED");
+                        String str = game.stand();
+                        List<FileUpload> array = game.getDealerCardsUploads();
+                        // event.editMessageAttachments(array).queue();
+                        // event.editMessage("Your Cards; total = edit" +
+                        // game.getOne().total()).queue();
+                        // fixed
+                        final List<LayoutComponent> list = new ArrayList<>();
+                        list.add(ActionRow.of(stand.asDisabled()));
+                        MessageEditData m = new MessageEditBuilder()
+                                        .setContent("Dealer's Cards; total = " + game.getDealer().total())
+                                        .setFiles(array)
+                                        .setComponents(list)
+                                        .build();
+                        event.editMessage(m).queue();
+                        System.out.println(game.getDealer().total());
+                        event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
+                                        .queue();
+                }
         }
-    }
 }
