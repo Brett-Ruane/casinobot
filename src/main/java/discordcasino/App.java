@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -65,7 +63,7 @@ public class App extends ListenerAdapter {
             // event.editMessage("Your Cards; total = edit" +
             // game.getOne().total()).queue();
             // fixed
-            MessageEditData m = new MessageEditBuilder().setContent("Your Cards; total = edit" + game.getOne().total())
+            MessageEditData m = new MessageEditBuilder().setContent("Your Cards; total = " + game.getOne().total())
                     .setFiles(array)
                     .build();
             event.editMessage(m).queue();
