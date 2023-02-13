@@ -114,9 +114,8 @@ public class BlackJackUI extends Application {
         // dealer cards
         dealerCardRow = new HBox(4);
         for (int i = 0; i < dealerCardHolder.length; i++) {
-            // InputStream is =
-            // getClass().getClassLoader().getResourceAsStream("GameCards/white.GIF");
-            dealerCardHolder[i] = new ImageView(new Image(String.valueOf(new File("GameCards/white.GIF"))));
+            InputStream is = getClass().getClassLoader().getResourceAsStream("GameCards/white.GIF");
+            dealerCardHolder[i] = new ImageView(new Image(is));
         }
         dealerCardRow.setPadding(new Insets(20));
         dealerCardHolder[0] = new ImageView(dealerCards.get(0).url());
