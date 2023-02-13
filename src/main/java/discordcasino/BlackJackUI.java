@@ -18,6 +18,9 @@ import javafx.scene.layout.Priority;
 import javafx.geometry.Insets;
 import javafx.scene.control.ProgressBar;
 import javafx.beans.binding.Bindings;
+
+import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
@@ -110,8 +113,11 @@ public class BlackJackUI extends Application {
 
         // dealer cards
         dealerCardRow = new HBox(4);
-        for (int i = 0; i < dealerCardHolder.length; i++)
-            dealerCardHolder[i] = new ImageView("GameCards/white.GIF");
+        for (int i = 0; i < dealerCardHolder.length; i++) {
+            // InputStream is =
+            // getClass().getClassLoader().getResourceAsStream("GameCards/white.GIF");
+            dealerCardHolder[i] = new ImageView(new Image(String.valueOf(new File("GameCards/white.GIF"))));
+        }
         dealerCardRow.setPadding(new Insets(20));
         dealerCardHolder[0] = new ImageView(dealerCards.get(0).url());
         dealerCardHolder[1] = new ImageView("GameCards/back1.GIF");
