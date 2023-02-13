@@ -35,7 +35,6 @@ public class App extends ListenerAdapter {
                 FileUpload upload = FileUpload.fromData(file);
                 event.getChannel().sendMessage("Here is my image !").addFiles(upload).queue();
                 event.reply("working on it!!!").setEphemeral(true).queue();
-                Application.launch(BlackJackUI.class, a);
                 break;
         }
     }
