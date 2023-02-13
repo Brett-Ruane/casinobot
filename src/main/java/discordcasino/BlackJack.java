@@ -81,18 +81,25 @@ public class BlackJack {
         FileUpload upload = FileUpload.fromData(file);
         dealerCardHolder.set(1, upload);
         while ((dealer.total() < 17) || (dealer.total() > 17 && dealer.getAce() != 0)) {
-            if (dealer.total() > 17 && dealer.getAce() > 0) {
+            if (dealer.total() == 21) {
+                break;
+            }
+            if (dealer.total() <= 21 && dealer.total() >= 17 && dealer.getAce() == 1) {
+                break;
+            }
+            if (dealer.total() > 17 && dealer.getAce() != 0) {
                 dealer.subTotal(10);
                 dealer.subAce();
+            } else {
+                Card dealt = deck.deal();
+                dealer.add(dealt.pointValue());
+                dealerCards.add(dealt);
+                file = new File(dealt.url());
+                upload = FileUpload.fromData(file);
+                dealerCardHolder.add(upload);
+                if (dealt.pointValue() == 11)
+                    dealer.addAce();
             }
-            Card dealt = deck.deal();
-            dealer.add(dealt.pointValue());
-            dealerCards.add(dealt);
-            file = new File(dealt.url());
-            upload = FileUpload.fromData(file);
-            dealerCardHolder.add(upload);
-            if (dealt.pointValue() == 11)
-                dealer.addAce();
         }
         if ((one.total() > dealer.total()) || (dealer.total() > 21)) {
             // you win

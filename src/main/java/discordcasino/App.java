@@ -9,7 +9,6 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.*;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -17,22 +16,19 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 public class App extends ListenerAdapter {
 
         private BlackJack game = new BlackJack();
 
         SlashCommandInteractionEvent bustAct;
-        private long messageId;
+        private long messageIdS;
+        private long messageIdH;
         String standID = "";
-        private boolean bust = false;
-        private static EventWaiter waiter;
 
         List<FileUpload> arrayD = new ArrayList<FileUpload>();
 
@@ -42,11 +38,10 @@ public class App extends ListenerAdapter {
         private Button stand;
 
         public static void main(String[] args) throws Exception {
-                waiter = new EventWaiter();
                 JDA casino = JDABuilder
                                 .createLight("MTA3MzUyNTAyMjEwNDIyNzg2MA.GTnhor.1JHNIcr_7AZUKXo4_6AhQppZPEuVK2YMMAU7IM",
                                                 Collections.emptyList())
-                                .addEventListeners(new App(), waiter)
+                                .addEventListeners(new App())
                                 .setActivity(Activity.playing("Type /blackjack"))
                                 .build();
                 casino.updateCommands().addCommands(Commands.slash("blackjack", "Plays BlackJack")).queue();
@@ -56,7 +51,7 @@ public class App extends ListenerAdapter {
                 switch (event.getName()) {
                         case "blackjack":
                                 game = new BlackJack();
-                                event.reply("Black Jack").setEphemeral(true).queue();
+                                event.deferReply().queue();
                                 arrayD = game.getDealerCardsUploads();
                                 stand = Button.danger("Stand", "Stand");
                                 event.getChannel()
@@ -65,7 +60,7 @@ public class App extends ListenerAdapter {
                                                                                 .get(0).pointValue() + " + ?")
                                                 .addFiles(arrayD.get(0), arrayD.get(1))
                                                 .setActionRow(stand).queue((message) -> {
-                                                        messageId = message.getIdLong();
+                                                        messageIdS = message.getIdLong();
                                                 });
                                 bustAct = event;
                                 standID = event.getChannel().getLatestMessageId();
@@ -74,7 +69,9 @@ public class App extends ListenerAdapter {
                                 event.getChannel().sendMessage("Your Cards; total = " + game.getOne().total())
                                                 .addFiles(array.get(0), array.get(1))
                                                 .setActionRow(hit)
-                                                .queue();
+                                                .queue((message) -> {
+                                                        messageIdH = message.getIdLong();
+                                                });
                                 break;
                 }
         }
@@ -90,7 +87,6 @@ public class App extends ListenerAdapter {
                         // game.getOne().total()).queue();
                         // fixed
                         if (str != "") {
-                                bust = true;
                                 final List<LayoutComponent> list = new ArrayList<>();
                                 list.add(ActionRow.of(hit.asDisabled()));
                                 MessageEditData m = new MessageEditBuilder()
@@ -112,14 +108,6 @@ public class App extends ListenerAdapter {
                 }
                 if (event.getButton().getId().equals("Stand")) {
                         System.out.println("EVENT = " + event.getButton().getId());
-                        // if (bust == true) {
-                        // stand.asDisabled();
-                        // waiter.waitForEvent(ButtonInteractionEvent.class,
-                        // e -> e.getUser().equals(event.getUser())
-                        // && e.getChannel().equals/(event.getChannel())
-                        // && !e.getMessage().equals(event.getMessage()),
-                        // e -> event.editButton(stand).queue());
-                        // }
                         System.out.println("STAND PRESSED");
                         str = game.stand();
                         List<FileUpload> array = game.getDealerCardsUploads();
@@ -135,6 +123,7 @@ public class App extends ListenerAdapter {
                                         .setComponents(list)
                                         .build();
                         event.editMessage(m).queue();
+                        changeHit(bustAct);
                         System.out.println(game.getDealer().total());
                         event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
                                         .queue();
@@ -151,8 +140,20 @@ public class App extends ListenerAdapter {
                                 .setFiles(arrayD.get(0), arrayD.get(1))
                                 .setComponents(list)
                                 .build();
-                s.getChannel().editMessageById(messageId, m).queue();
+                s.getChannel().editMessageById(messageIdS, m).queue();
                 s.getChannel().sendMessage("<@" + s.getMember().getUser().getId() + "> - You " + str)
                                 .queue();
+        }
+
+        public void changeHit(SlashCommandInteractionEvent s) {
+                List<FileUpload> array = game.getCardsUploads();
+                final List<LayoutComponent> list = new ArrayList<>();
+                list.add(ActionRow.of(hit.asDisabled()));
+                MessageEditData m = new MessageEditBuilder()
+                                .setContent("Your Cards; total = " + game.getOne().total())
+                                .setFiles(array)
+                                .setComponents(list)
+                                .build();
+                s.getChannel().editMessageById(messageIdH, m).queue();
         }
 }
