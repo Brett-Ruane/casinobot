@@ -1,9 +1,9 @@
 package discordcasino;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
-
-import javafx.application.Application;
+import java.util.List;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.interaction.command.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 public class App extends ListenerAdapter {
@@ -31,10 +33,17 @@ public class App extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         switch (event.getName()) {
             case "blackjack":
-                File file = new File("GameCards/back1.GIF");
-                FileUpload upload = FileUpload.fromData(file);
-                event.getChannel().sendMessage("Here is my image !").addFiles(upload).queue();
-                event.reply("working on it!!!").setEphemeral(true).queue();
+                event.reply("Black Jack").setEphemeral(true).queue();
+                BlackJack game = new BlackJack();
+                Button hit = Button.primary("Hit", "Hit");
+                Button stand = Button.danger("Stand", "Stand");
+                final List<ItemComponent> list = new ArrayList<>();
+                list.add(hit);
+                list.add(stand);
+                List<FileUpload> array = game.getCardsUploads();
+                event.getChannel().sendMessage("total = " + game.getOne().total()).addFiles(array.get(0), array.get(1))
+                        .setActionRow(list)
+                        .queue();
                 break;
         }
     }

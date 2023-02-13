@@ -1,32 +1,23 @@
 package discordcasino;
 
 import javafx.stage.Stage;
-import net.dv8tion.jda.api.utils.FileUpload;
 import javafx.scene.Scene;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.layout.HBox;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Priority;
 import javafx.geometry.Insets;
-import javafx.scene.control.ProgressBar;
-import javafx.beans.binding.Bindings;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.text.*;
 import javafx.scene.paint.Color;
+
+import net.dv8tion.jda.api.utils.FileUpload;
 
 public class BlackJackUI extends Application {
 
