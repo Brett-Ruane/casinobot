@@ -1,6 +1,5 @@
 package discordcasino;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +18,8 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 public class App extends ListenerAdapter {
 
     private BlackJack game = new BlackJack();
+
+    private String gameState = "";
 
     public static void main(String[] args) throws Exception {
         JDA casino = JDABuilder
@@ -49,6 +50,11 @@ public class App extends ListenerAdapter {
                         .addFiles(array.get(0), array.get(1))
                         .setActionRow(hit)
                         .queue();
+                if (gameState != "") {
+                    hit.asDisabled();
+                    stand.asDisabled();
+                    event.getChannel().sendMessage("You " + gameState).queue();
+                }
                 break;
         }
     }
@@ -67,6 +73,7 @@ public class App extends ListenerAdapter {
                     .build();
             event.editMessage(m).queue();
             System.out.println(game.getOne().total());
+            gameState = str;
         }
         if (event.getButton().getId().equals("Stand")) {
             System.out.println("STAND PRESSED");
@@ -81,8 +88,8 @@ public class App extends ListenerAdapter {
                     .setFiles(array)
                     .build();
             event.editMessage(m).queue();
-            event.reply("You" + str);
             System.out.println(game.getOne().total());
+            gameState = str;
         }
     }
 }
