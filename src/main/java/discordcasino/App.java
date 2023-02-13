@@ -64,6 +64,7 @@ public class App extends ListenerAdapter {
             // event.editMessageAttachments(array).queue();
             // event.editMessage("Your Cards; total = edit" +
             // game.getOne().total()).queue();
+            // fixed
             MessageEditData m = new MessageEditBuilder().setContent("Your Cards; total = edit" + game.getOne().total())
                     .setFiles(array)
                     .build();
