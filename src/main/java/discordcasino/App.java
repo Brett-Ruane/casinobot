@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.w3c.dom.Text;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -18,9 +16,6 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
@@ -76,34 +71,6 @@ public class App extends ListenerAdapter {
                                                 .queue((message) -> {
                                                         messageIdPlayer = message.getIdLong();
                                                 });
-                                break;
-                        case "e":
-                                event.deferReply().queue();
-                                EmbedBuilder embed = new EmbedBuilder();
-                                File file = new File("GameCards/kinghearts.GIF");
-                                embed.setDescription("Dealer Cards");
-                                embed.setImage("attachment://kinghearts.GIF");
-                                embed.setTitle("Black Jack");
-                                // event.getChannel()
-                                // .sendMessageEmbeds(embed.build())
-                                // .addFiles(FileUpload.fromData(file, "kinghearts.GIF"))
-                                // .queue((message) -> {
-                                // messageIdDealer = message.getIdLong();
-                                // });
-                                EmbedBuilder embed2 = new EmbedBuilder();
-                                File file2 = new File("GameCards/queenhearts.GIF");
-                                embed2.setDescription("Your Cards");
-                                embed2.setImage("attachment://queenhearts.GIF");
-                                embed2.setTitle("Black Jack");
-                                event.getChannel()
-                                                .sendMessageEmbeds(embed.build(), embed2.build())
-                                                .addFiles(FileUpload.fromData(file2, "queenhearts.GIF"))
-                                                .queue((message) -> {
-                                                        messageIdDealer = message.getIdLong();
-                                                });
-                                break;
-                        case "merge":
-
                                 break;
                 }
         }
