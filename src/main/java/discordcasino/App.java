@@ -52,7 +52,7 @@ public class App extends ListenerAdapter {
                         case "blackjack":
                                 if (mIdHolder.containsKey(event.getUser().getName())) {
                                         event.reply("<@" + event.getMember().getUser().getId()
-                                                        + "> Finish the current game!!!").queue();
+                                                        + "> Finish the current game!!!").setEphemeral(true).queue();
                                         break;
                                 }
                                 event.reply("Black Jack").queue();
