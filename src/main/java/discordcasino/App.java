@@ -50,14 +50,12 @@ public class App extends ListenerAdapter {
         public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
                 switch (event.getName()) {
                         case "blackjack":
-                                event.reply("Black Jack").queue();
                                 if (mIdHolder.containsKey(event.getUser().getName())) {
-                                        event.getChannel()
-                                                        .sendMessage("<@" + event.getMember().getUser().getId()
-                                                                        + "> Finish the current game!!!")
-                                                        .queue();
+                                        event.reply("<@" + event.getMember().getUser().getId()
+                                                        + "> Finish the current game!!!").queue();
                                         break;
                                 }
+                                event.reply("Black Jack").queue();
                                 game = new BlackJack();
                                 arrayD = game.getDealerCardsUploads();
                                 stand = Button.danger("Stand", "Stand");
