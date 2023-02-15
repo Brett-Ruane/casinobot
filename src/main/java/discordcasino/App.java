@@ -124,6 +124,7 @@ public class App extends ListenerAdapter {
                         changeDealer(bustAct);
                         event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
                                         .queue();
+                        mIdHolder.remove(event.getUser().getName());
                 }
         }
 
