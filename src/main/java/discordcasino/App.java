@@ -1,11 +1,10 @@
 package discordcasino;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -24,12 +23,13 @@ public class App extends ListenerAdapter {
 
         private BlackJack game = new BlackJack();
 
-        SlashCommandInteractionEvent bustAct;
+        private SlashCommandInteractionEvent bustAct;
+        private HashMap<String, Long> mIdHolder = new HashMap<>();
         private long messageIdDealer;
         private long messageIdPlayer;
         String standID = "";
 
-        List<FileUpload> arrayD = new ArrayList<FileUpload>();
+        private List<FileUpload> arrayD = new ArrayList<FileUpload>();
 
         private String str = "";
 
@@ -51,6 +51,13 @@ public class App extends ListenerAdapter {
                 switch (event.getName()) {
                         case "blackjack":
                                 event.reply("Black Jack").queue();
+                                if (mIdHolder.containsKey(event.getUser().getName())) {
+                                        event.getChannel()
+                                                        .sendMessage("<@" + event.getMember().getUser().getId()
+                                                                        + "> Finish the current game!!!")
+                                                        .queue();
+                                        break;
+                                }
                                 game = new BlackJack();
                                 arrayD = game.getDealerCardsUploads();
                                 stand = Button.danger("Stand", "Stand");
@@ -60,6 +67,8 @@ public class App extends ListenerAdapter {
                                                                                 .get(0).pointValue() + " + ?")
                                                 .addFiles(arrayD.get(0), arrayD.get(1)).queue((message) -> {
                                                         messageIdDealer = message.getIdLong();
+                                                        mIdHolder.put(event.getUser().getName(),
+                                                                        messageIdDealer);
                                                 });
                                 bustAct = event;
                                 standID = event.getChannel().getLatestMessageId();
@@ -93,6 +102,7 @@ public class App extends ListenerAdapter {
                                                 .sendMessage("<@" + event.getMember().getUser().getId() + "> - You "
                                                                 + str)
                                                 .queue();
+                                mIdHolder.remove(event.getUser().getName());
                         } else {
                                 MessageEditData m = new MessageEditBuilder()
                                                 .setContent("Your Cards; total = " + game.getOne().total())
@@ -100,16 +110,11 @@ public class App extends ListenerAdapter {
                                                 .build();
                                 event.editMessage(m).queue();
                         }
-                        System.out.println(game.getOne().total());
                 }
                 if (event.getButton().getId().equals("Stand")) {
                         System.out.println("STAND PRESSED");
                         str = game.stand();
                         List<FileUpload> array = game.getCardsUploads();
-                        // event.editMessageAttachments(array).queue();
-                        // event.editMessage("Your Cards; total = edit" +
-                        // game.getOne().total()).queue();
-                        // fixed
                         final List<LayoutComponent> list = new ArrayList<>();
                         list.add(ActionRow.of(hit.asDisabled(), stand.asDisabled()));
                         MessageEditData m = new MessageEditBuilder()
@@ -119,7 +124,6 @@ public class App extends ListenerAdapter {
                                         .build();
                         event.editMessage(m).queue();
                         changeDealer(bustAct);
-                        System.out.println(game.getDealer().total());
                         event.getChannel().sendMessage("<@" + event.getMember().getUser().getId() + "> - You " + str)
                                         .queue();
                 }
@@ -131,6 +135,7 @@ public class App extends ListenerAdapter {
                                 .setContent("Dealer's Cards; total = " + game.getDealer().total())
                                 .setFiles(array)
                                 .build();
-                s.getChannel().editMessageById(messageIdDealer, m).queue();
+                Long messageId = mIdHolder.get(s.getUser().getName());
+                s.getChannel().editMessageById(messageId, m).queue();
         }
 }

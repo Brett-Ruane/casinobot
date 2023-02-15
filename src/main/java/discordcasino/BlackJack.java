@@ -104,17 +104,14 @@ public class BlackJack {
         if ((one.total() > dealer.total()) || (dealer.total() > 21)) {
             // you win
             System.out.println("YOU WIN");
-            System.out.println("Dealer Total = " + dealer.total());
             return "win";
         } else if (one.total() == dealer.total()) {
             // tie
             System.out.println("TIE");
-            System.out.println("Dealer Total = " + dealer.total());
             return "tie";
         } else {
             // you loose
             System.out.println("YOU LOOSE");
-            System.out.println("Dealer Total = " + dealer.total());
             return "lose";
         }
     }
@@ -134,7 +131,6 @@ public class BlackJack {
             one.subAce();
         } else if (one.total() > 21) {
             // you loose
-            System.out.println("Total = " + one.total());
             System.out.println("BUST");
             System.out.println("YOU LOOSE");
             return "lose";
