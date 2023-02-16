@@ -50,9 +50,9 @@ public class App extends ListenerAdapter {
         public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
                 switch (event.getName()) {
                         case "blackjack":
-                                if (mIdHolder.containsKey(event.getUser().getName())) {
+                                if (mIdHolder.isEmpty() == false) {
                                         event.reply("<@" + event.getMember().getUser().getId()
-                                                        + "> Finish the current game!!!").setEphemeral(true).queue();
+                                                        + "> Only one game at a time!!!").setEphemeral(true).queue();
                                         break;
                                 }
                                 event.reply("Black Jack").queue();
