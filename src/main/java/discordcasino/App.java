@@ -38,7 +38,7 @@ public class App extends ListenerAdapter {
 
         public static void main(String[] args) throws Exception {
                 JDA casino = JDABuilder
-                                .createLight("MTA3MzUyNTAyMjEwNDIyNzg2MA.GTnhor.1JHNIcr_7AZUKXo4_6AhQppZPEuVK2YMMAU7IM",
+                                .createLight("HIDDEN TOKEN",
                                                 Collections.emptyList())
                                 .addEventListeners(new App())
                                 .setActivity(Activity.playing("Type /blackjack"))
